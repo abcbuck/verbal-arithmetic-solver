@@ -13,6 +13,40 @@ bool lengthLess(std::string& a, std::string& b) {
   return a.length() < b.length();
 }
 
+//quit program if false is returned; a true return value doesn't affect program flow
+bool backtrack(
+  int numberOfSummands,
+  std::string& sum,
+  std::unordered_map<char, int>& resolveChar,
+  std::vector<std::vector<char>>& columns,
+  std::set<int>& digitsAvailable,
+  std::stack<std::tuple<int, int>>& memory,
+  int& column,
+  int& row,
+  std::stack<int>& carries,
+  int& lastDigit
+) {
+  for(std::tuple<int, int> memtop;;) {
+    if(memory.empty())
+      //brute-force complete, quit program
+      return false;
+    memtop = memory.top();
+    memory.pop();
+    column = std::get<0>(memtop);
+    row = std::get<1>(memtop);
+    if(row != numberOfSummands)
+      break;
+    digitsAvailable.insert(resolveChar[sum[sum.size()-1-column]]);
+    resolveChar[sum[sum.size()-1-column]] = -1;
+  }
+  lastDigit = resolveChar[columns[column][row]];
+  digitsAvailable.insert(lastDigit);
+  resolveChar[columns[column][row]] = -1;
+  while(carries.size()-1 > column)
+    carries.pop();
+  return true;
+}
+
 int main() {
   int numberOfSummands;
   std::cout << "Please enter the number of summands: ";
@@ -60,7 +94,9 @@ int main() {
   }
 
   std::set<int> digitsAvailable = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-  std::stack<std::tuple<int, int>> memory; //position (int, int)
+  //stack of positions (int, int) in the addition table at which numbers are tried as values for characters
+  //the stack is used to backtrack in case a combination of values didn't work out while brute-forcing
+  std::stack<std::tuple<int, int>> memory;
 
   int column = 0, row = 0;
   std::stack<int> carries;
@@ -68,7 +104,9 @@ int main() {
   int lastDigit = -1;
   int counter = 0;
   for(;;) {
+    //all characters are mapped to digits and all chars match: output a solution if one was found, then backtrack
     if(column == sum.length()) {
+      //if all summands add up without undue carry, a solution was found (9+9=8 is not a solution, because the carry is 1)
       if(carries.top() == 0) {//output
         std::cout << std::endl << "Counter: " << ++counter << std::endl;
         std::for_each(resolveChar.begin(), resolveChar.end(), [](std::pair<const char, int>& el) {
@@ -83,7 +121,7 @@ int main() {
             std::cout << " ";
           for(int j = 0; j < summands[i].length(); j++)
             if(resolveChar[summands[i][j]]<0)
-              std::cout << "-";
+              std::cout << "-";//todo: remove lines where resolveChar < 1 in output because this never happens and was meant for debugging
             else
               std::cout << resolveChar[summands[i][j]];
           std::cout << std::endl;
@@ -97,27 +135,15 @@ int main() {
         std::cout << std::endl;
       }//output
 
-      std::tuple<int, int> memtop;
-      for(;;) {
-        memtop = memory.top();
-        memory.pop();
-        column = std::get<0>(memtop);
-        row = std::get<1>(memtop);
-        if(row != numberOfSummands)
-          break;
-        digitsAvailable.insert(resolveChar[sum[sum.size()-1-column]]);
-        resolveChar[sum[sum.size()-1-column]] = -1;
-      }
-      lastDigit = resolveChar[columns[column][row]];
-      digitsAvailable.insert(lastDigit);
-      resolveChar[columns[column][row]] = -1;
-      while(carries.size()-1 > column)
-        carries.pop();
+      backtrack(numberOfSummands, sum, resolveChar, columns, digitsAvailable, memory, column, row, carries, lastDigit);
       continue;
     }
+    //unmapped character at the current position
     if(resolveChar[columns[column][row]] == -1) {
-      if(lastDigit != -1) { //=> it != digitsAvailable.end()
+      //if the digit that last was tried for the character at the current position wasn't the highest left, try the next highest one
+      if(lastDigit != -1) {
         std::set<int>::iterator it = digitsAvailable.find(lastDigit);
+        //=> it != digitsAvailable.end(), because lastDigit != -1 only if backtracking has occurred, and if backtracking has occurred, lastDigit is in digitsAvailable
         if(++it != digitsAvailable.end()) {
           resolveChar[columns[column][row]] = *it;
           digitsAvailable.erase(it);
@@ -125,24 +151,8 @@ int main() {
           lastDigit = -1;
         }
         else {
-          std::tuple<int, int> memtop;
-          for(;;) {
-            if(memory.empty())
-              return 0;
-            memtop = memory.top();
-            memory.pop();
-            column = std::get<0>(memtop);
-            row = std::get<1>(memtop);
-            if(row != numberOfSummands)
-              break;
-            digitsAvailable.insert(resolveChar[sum[sum.size()-1-column]]);
-            resolveChar[sum[sum.size()-1-column]] = -1;
-          }
-          lastDigit = resolveChar[columns[column][row]];
-          digitsAvailable.insert(lastDigit);
-          resolveChar[columns[column][row]] = -1;
-          while(carries.size()-1 > column)
-            carries.pop();
+          if(!backtrack(numberOfSummands, sum, resolveChar, columns, digitsAvailable, memory, column, row, carries, lastDigit))
+            return 0;
           continue;
         }
       }
@@ -153,6 +163,7 @@ int main() {
       }
     }
     if(row < numberOfSummands-1)
+      //advance row
       row++;
     else { //(when at the end of the row)
       //def/check sum and go to next column
@@ -171,26 +182,11 @@ int main() {
         carries.push(columnSum/10);
       }
       else {
-        std::tuple<int, int> memtop;
-        for(;;) {
-          memtop = memory.top();
-          memory.pop();
-          column = std::get<0>(memtop);
-          row = std::get<1>(memtop);
-          if(row != numberOfSummands)
-            break;
-          digitsAvailable.insert(resolveChar[sum[sum.size()-1-column]]);
-          resolveChar[sum[sum.size()-1-column]] = -1;
-        }
-        lastDigit = resolveChar[columns[column][row]];
-        digitsAvailable.insert(lastDigit);
-        resolveChar[columns[column][row]] = -1;
-        while(carries.size()-1 > column)
-          carries.pop();
-        continue;
+        backtrack(numberOfSummands, sum, resolveChar, columns, digitsAvailable, memory, column, row, carries, lastDigit);
+        //continue;
       }
     }
-  }
+  }//for(;;)
 
   return 0;
 }
