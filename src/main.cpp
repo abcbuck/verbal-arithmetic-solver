@@ -1,6 +1,6 @@
 //also known as verbal arithmetic or cryptarithms
 
-#include <algorithm>
+#include <algorithm> //for_each
 #include <iostream>
 #include <set>
 #include <stack>
@@ -48,6 +48,7 @@ bool backtrack(
 }
 
 int main() {
+  //input
   int numberOfSummands;
   std::cout << "Please enter the number of summands: ";
   std::cin >> numberOfSummands;
@@ -63,6 +64,7 @@ int main() {
     std::cout << "Can't solve problem: Summands are longer than sum.";
     return 0;
   }
+  //input end
 
   //create map of chars and digits
   std::unordered_map<char, int> resolveChar;
@@ -77,7 +79,7 @@ int main() {
     return 0;
   }
 
-  resolveChar.insert(std::make_pair(0, 0));
+  resolveChar.emplace(std::make_pair<char, int>(0, 0)); //leading spaces, in case sum is longer than any of the summands, take the value zero
 
   //store summands column-wise, indexed from right to left (little-endian)
   std::vector<std::vector<char>> columns(sum.length(), std::vector<char>(numberOfSummands));
