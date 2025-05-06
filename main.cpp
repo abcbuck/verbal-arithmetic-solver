@@ -120,18 +120,12 @@ int main() {
           for(int j = summands[i].length(); j < sum.length(); j++)
             std::cout << " ";
           for(int j = 0; j < summands[i].length(); j++)
-            if(resolveChar[summands[i][j]]<0)
-              std::cout << "-";//todo: remove lines where resolveChar < 1 in output because this never happens and was meant for debugging
-            else
-              std::cout << resolveChar[summands[i][j]];
+            std::cout << resolveChar[summands[i][j]];
           std::cout << std::endl;
         }
         std::cout << sum << "    ";
         for(int j = 0; j < sum.length(); j++)
-          if(resolveChar[sum[j]]<0)
-            std::cout << "-";
-          else
-            std::cout << resolveChar[sum[j]];
+          std::cout << resolveChar[sum[j]];
         std::cout << std::endl;
       }//output
 
