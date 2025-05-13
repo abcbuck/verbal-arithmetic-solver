@@ -1,13 +1,11 @@
-//also known as verbal arithmetic or cryptarithms
-
-#include <algorithm> //for_each
+#include <algorithm> //for_each, max_element
 #include <iostream>
 #include <set>
 #include <stack>
 #include <tuple>
 #include <unordered_map>
 #include <utility>
-#include <vector>
+#include <vector> //make_pair
 
 bool lengthLess(std::string& a, std::string& b) {
   return a.length() < b.length();
@@ -70,9 +68,9 @@ int main() {
   std::unordered_map<char, int> resolveChar;
   for(int i = 0; i < numberOfSummands; i++)
     for(int j = 0; j < summands[i].length(); j++)
-      resolveChar.insert(std::make_pair(summands[i][j], -1));
+      resolveChar.emplace(std::make_pair(summands[i][j], -1));
   for(int i = 0; i < sum.length(); i++)
-    resolveChar.insert(std::make_pair(sum[i], -1));
+    resolveChar.emplace(std::make_pair(sum[i], -1));
   
   if(resolveChar.size() > 10) {
     std::cout << "Can't solve problem: There are more than 10 variables.";
