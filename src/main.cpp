@@ -130,7 +130,7 @@ int main() {
 
       backtrack(numberOfSummands, sum, resolveChar, columns, digitsAvailable, memory, column, row, carries, lastDigit);
     }
-    //if the digit that last was tried for the character at the current position wasn't the highest left, try the next highest one
+    //if the digit that last was tried for the character at the current position wasn't the highest left, try the next highest one, else backtrack
     if(resolveChar[columns[column][row]] == -1) { //unmapped character at the current position
       if(lastDigit != -1) { //this digit has been tried before, choose the next one
         std::set<int>::iterator it = digitsAvailable.find(lastDigit);
@@ -153,20 +153,23 @@ int main() {
         memory.emplace(std::make_tuple(column, row));
       }
     }
+    //the digit at the current cursor position is set, find the next position to try digits
     if(row < numberOfSummands-1)
       //advance row
       row++;
     else { //(when at the end of the row)
-      //def/check sum and go to next column
+      //def column sum
       int sumIndex = sum.size()-1-column;
       int columnSum = carries.top();
       for(int i = 0; i < numberOfSummands; i++)
         columnSum += resolveChar[columns[column][i]];
+      //check column sum for consistency with previous digits. if the current sum digit isn't set, try the column sum as its (only) value
       if(resolveChar[sum[sumIndex]] == -1 && digitsAvailable.find(columnSum % 10) != digitsAvailable.end()) {
         resolveChar[sum[sumIndex]] = columnSum % 10;
         digitsAvailable.erase(columnSum % 10);
         memory.emplace(std::make_tuple(column, numberOfSummands));
       }
+      //if current partial solution is valid, set cursor position to the top of the next column
       if(resolveChar[sum[sumIndex]] == columnSum % 10) {
         column++;
         row = 0;
