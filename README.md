@@ -1,6 +1,7 @@
 # What it does
 
 Solves any [verbal arithmetic](https://en.wikipedia.org/wiki/Verbal_arithmetic) puzzle only involving addition.
+Verbal arithmetic is also known as alphametics, cryptarithmetic, cryptarithm or word addition.
 
 # How it works
 
