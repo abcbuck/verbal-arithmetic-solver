@@ -13,15 +13,15 @@ Eventually, this program finds all solutions (as the potential search space is r
 
 # Fun fact
 
-As the program counts the solutions, theoretically, you could use it to calculate numbers of the form <math>10!/(10-d)!</math> by counting, using the input
+As the program counts the solutions, theoretically, you could use it to calculate numbers of the form $10!/(10-d)!$ by counting, using the input:
 ```
 {
   Number of inputs: 1,
-           Summand: ABC...L, where L is the <math>d</math>th letter of the alphabet,
+           Summand: ABC...L, where L is the dth letter of the alphabet,
                Sum: [Summand]
 }
-```.
-However, this turns out to be quite slow, and only works reasonably well for d up to 5 (unless you're willing to wait for an hour burning your processor. However, that would still be unreasonable).
+```
+However, this turns out to be quite slow, and only works reasonably well for $d$ up to 5 (unless you're willing to wait for an hour burning your processor. However, that would still be unreasonable).
 ```
 ...
 
