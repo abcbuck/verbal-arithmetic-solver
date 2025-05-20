@@ -41,7 +41,7 @@ jobs:
         echo "project-name=`grep 'project(' 'src/CMakeLists.txt' | perl -pe 's/.*\((.*?)\s.*/$1/'`" >> "$GITHUB_OUTPUT"
 
     - name: Update to the latest version of CMake
-      uses: lukka/get-cmake@v4.0.0
+      uses: lukka/get-cmake@latest
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required for single-configuration generators such as make.
