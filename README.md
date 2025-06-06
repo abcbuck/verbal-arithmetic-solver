@@ -7,7 +7,7 @@ Verbal arithmetic is also known as alphametics, cryptarithmetic, cryptarithm or 
 
 The solver implements a simple [backtracking](https://en.wikipedia.org/wiki/Backtracking) algorithm, systematically trying letter-to-digit assignments beginning with letters of the least power and the lowest digits.
 
-It continually extends a partial solution (a set of assignments that may be extended to a solution) by trying extensions to it, beginning with the partial solution where no letters are assigned digits (the empty set). When the numbers don't add up, it rejects an extension and backtracks. This means, it reverts the last extension and tries another one. That means, the last chosen digit didn't make sense with the prior ones and another digit is chosen if possible. Else, it backtracks again.
+It continually extends a partial solution (a set of assignments that may be extended to a solution) by trying extensions to it, beginning with the partial solution where no digits are assigned to letters (the empty set). When the numbers don't add up, it rejects an extension and backtracks. This means, it reverts the last extension and tries another one. That means, the last chosen digit didn't make sense with the prior ones and another digit is chosen if possible. Else, it backtracks again.
 
 Eventually, this program finds all solutions (as the potential search space is rather small for a computer: Naively, there are 10! = 3,628,800 possible solutions for a problem with 10 letters. This number is reduced by backtracking cutoffs).
 
